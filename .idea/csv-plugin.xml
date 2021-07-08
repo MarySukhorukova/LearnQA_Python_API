@@ -66,6 +66,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/tests/test_user_register.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
       </map>
     </option>
   </component>
