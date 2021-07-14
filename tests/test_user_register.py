@@ -1,3 +1,4 @@
+import pytest
 import requests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
@@ -7,6 +8,14 @@ from lib.methods import generate_random_string
 
 
 class TestUserRegister(BaseCase):
+    params = [
+    ({'password': '1234', 'username': 'qwerty', 'firstName': 'Qwe', 'lastName': 'Rty'}, 'email'),
+    ({'username': 'qwerty', 'firstName': 'Qwe', 'lastName': 'Rty', 'email': 'test@example.com'}, 'password'),
+    ({'password': 'qwerty', 'firstName': 'Qwe', 'lastName': 'Rty', 'email': 'test@example.com'}, 'username'),
+    ({'password': 'qwerty', 'username': 'test', 'lastName': 'Rty', 'email': 'test@example.com'}, 'firstName'),
+    ({'password': 'qwerty', 'username': 'test', 'firstName': 'Qwe', 'email': 'test@example.com'}, 'lastName')
+    ]
+
     def setup(self):
         base_part = 'learnqa'
         domain = '@example.com'
@@ -55,17 +64,14 @@ class TestUserRegister(BaseCase):
         assert response.content.decode("utf-8") == "The value of 'firstName' field is too long", \
             f'wrong error message {response.content}'
 
-    def test_create_user_without_any_field(self):
-        data_without_email = {'password': '1234', 'username': 'qwerty', 'firstName': 'Qwe', 'lastName': 'Rty'}
-        data_without_pass = {'username': 'qwerty', 'firstName': 'Qwe', 'lastName': 'Rty', 'email': self.email}
-        data_without_username = {'password': 'qwerty', 'firstName': 'Qwe', 'lastName': 'Rty', 'email': self.email}
-        data_without_first_name = {'password': 'qwerty', 'username': 'test', 'lastName': 'Rty', 'email': self.email}
-        data_without_last_name = {'password': 'qwerty', 'username': 'test', 'firstName': 'Qwe', 'email': self.email}
-        list_of_data = [data_without_last_name, data_without_email,
-                        data_without_pass, data_without_username, data_without_first_name]
-        for i in list_of_data:
-            response = requests.post('https://playground.learnqa.ru/api/user/', data=i)
-            Assertions.assert_code_status(response, 400)
-            print(response.content)
+    @pytest.mark.parametrize("param", params)
+    def test_create_user_without_fields(self, param):
+        data, lost_parameter = param
+        response = requests.post('https://playground.learnqa.ru/api/user/', data=data)
+        Assertions.assert_code_status(response, 400)
+        assert response.content.decode("utf-8") == f"The following required params are missed: {lost_parameter}"
+
+
+
 
 

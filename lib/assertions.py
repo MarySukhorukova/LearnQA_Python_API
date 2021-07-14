@@ -54,5 +54,9 @@ class Assertions:
         for name in names:
             assert name not in response_as_dict, f"Response JSON should't have key '{name}'. But it is present"
 
+    @staticmethod
+    def assert_check_str(response: Response, name):
+        assert response.content.decode("utf-8") == f"The following required params are missed: {name}", \
+            f'wrong error message {response.content}'
 
 
