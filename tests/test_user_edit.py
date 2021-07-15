@@ -1,7 +1,6 @@
 import requests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
-from lib.my_requests import MyRequests
 
 
 class TestUserEdit(BaseCase):
@@ -9,7 +8,7 @@ class TestUserEdit(BaseCase):
     def test_edit_user_auth_user(self):
         # Register
         register_date = self.prepare_registration_data()
-        response1 = MyRequests.post('/user/', data=register_date)
+        response1 = requests.post('https://playground.learnqa.ru/api/user/', data=register_date)
 
         Assertions.assert_code_status(response1, 200)
         Assertions.assert_json_has_key(response1, 'id')
@@ -24,14 +23,14 @@ class TestUserEdit(BaseCase):
             'email': email,
             'password': password
         }
-        response2 = MyRequests.post('/user/login', data=login_data)
+        response2 = requests.post('https://playground.learnqa.ru/api/user/login', data=login_data)
         auth_sid = response1.cookies.get(response2, "auth_sid")
         token = response1.cookies.get(response2, "x-csrf-token")
 
         # Edit email
         email = 'test.com'
 
-        response3 = MyRequests.put(f'/user/{user_id}',
+        response3 = requests.put(f'https://playground.learnqa.ru/api/user/{user_id}',
                                  headers={'x-csrf-token': token},
                                  cookies={"auth_sid": auth_sid},
                                  data={'email': email})
@@ -41,7 +40,7 @@ class TestUserEdit(BaseCase):
         # Edit name
 
         name = 'a'
-        response4 = MyRequests.put(f'/user/{user_id}',
+        response4 = requests.put(f'https://playground.learnqa.ru/api/user/{user_id}',
                                  headers={'x-csrf-token': token},
                                  cookies={"auth_sid": auth_sid},
                                  data={'firstName': name})
@@ -50,20 +49,26 @@ class TestUserEdit(BaseCase):
 
     def test_edit_user_not_auth(self):
         name = 'Harry'
-        response = MyRequests.put(f'/api/user/{user_id}',
-                                 data={'firstName': name})
+        response = requests.put('https://playground.learnqa.ru/api/user/25', data={'firstName': name})
 
         Assertions.assert_code_status(response, 400)
         assert response.content.decode("utf-8") == 'Auth token not supplied', f'wrong error message {response.content}'
 
     def test_edit_another_user_auth(self):
+        data = {
+            'email': 'vinkotov@example.com',
+            'password': '1234'
+        }
+        response1 = requests.post('https://playground.learnqa.ru/api/user/login', data=data)
+        auth_sid = response1.cookies.get(response1, "auth_sid")
+        token = response1.cookies.get(response1, "x-csrf-token")
+        user_id = self.get_json_value(response1, "user_id") + 1
         name = 'Harry'
-        response6 = requests.put(f'https://playground.learnqa.ru/api/user/{user_id}',
+        response2 = requests.put(f'https://playground.learnqa.ru/api/user/{user_id}',
                                  headers={'x-csrf-token': token},
                                  cookies={"auth_sid": auth_sid},
                                  data={'firstName': name})
 
-        Assertions.assert_code_status(response4, 400)
-        print(response6.content)
-
+        Assertions.assert_code_status(response2, 400)
+        assert response2.content.decode("utf-8") == 'Auth token not supplied', f'wrong error message {response2.content}'
 
