@@ -66,6 +66,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/tests/test_user_delete.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/tests/test_user_get.py">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/tests/test_user_register.py">
           <value>
             <Attribute>
