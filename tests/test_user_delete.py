@@ -73,5 +73,4 @@ class TestUserDelete(BaseCase):
                                     headers={'x-csrf-token': token},
                                     cookies={"auth_sid": auth_sid})
 
-        print(response4.status_code)
-        print(response4.content)
+
