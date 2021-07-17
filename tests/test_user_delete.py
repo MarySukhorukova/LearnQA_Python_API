@@ -58,6 +58,7 @@ class TestUserDelete(BaseCase):
 
         email = register_data['email']
         password = register_data['password']
+        username = register_data['username']
         user_id = self.get_json_value(response2, 'id')
 
         login_data = {
@@ -73,4 +74,9 @@ class TestUserDelete(BaseCase):
                                     headers={'x-csrf-token': token},
                                     cookies={"auth_sid": auth_sid})
 
+        response5 = requests.get(f'https://playground.learnqa.ru/api/user/{user_id}',
+                                 headers={'x-csrf-token': token},
+                                 cookies={"auth_sid": auth_sid})
 
+        Assertions.assert_code_status(response5, 200)
+        Assertions.assert_json_value_by_name(response5, "username", username, "username does not match")
