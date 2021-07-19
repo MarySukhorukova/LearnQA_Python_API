@@ -1,11 +1,15 @@
+import allure
 import requests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
 import time
 
 
+@allure.epic("Delete cases")
 class TestUserDelete(BaseCase):
 
+    @allure.title("Delete user with id 2")
+    @allure.description("This test login user specific user and try to delete him")
     def test_delete_user_id2(self):
         data = {
             'email': 'vinkotov@example.com',
@@ -19,6 +23,8 @@ class TestUserDelete(BaseCase):
         Assertions.assert_code_status(response, 400)
         assert response.content.decode("utf-8") == 'Auth token not supplied', f'wrong error message {response.content}'
 
+    @allure.title("Register then delete flow")
+    @allure.description("This test register user and then delete this user")
     def test_create_and_delete_user(self):
         register_date = self.prepare_registration_data()
         response1 = requests.post('https://playground.learnqa.ru/api/user/', data=register_date)
@@ -48,6 +54,8 @@ class TestUserDelete(BaseCase):
         Assertions.assert_code_status(response4, 404)
         assert response4.content.decode("utf-8") == 'User not found', f'wrong error message {response4.content}'
 
+    @allure.title("Register and then delete another user")
+    @allure.description("This test register user and check that this user can't delete another user")
     def test_delete_user_when_login_another_user(self):
         register_data = self.prepare_registration_data()
         time.sleep(2)

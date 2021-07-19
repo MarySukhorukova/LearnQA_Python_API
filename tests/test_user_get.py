@@ -2,10 +2,14 @@ import requests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
 import time
+import allure
 
 
+@allure.epic("Data receipt cases")
 class TestUserGet(BaseCase):
 
+    @allure.title("Register and get another user data")
+    @allure.description("In this test new user is getting data another user (not success, he gets only username)")
     def test_get_user_details_auth_as_another_user(self):
         register_data = self.prepare_registration_data()
         time.sleep(2)

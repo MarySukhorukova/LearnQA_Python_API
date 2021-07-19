@@ -1,10 +1,14 @@
 import requests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
+import allure
 
 
+@allure.epic("Editing a user cases")
 class TestUserEdit(BaseCase):
 
+    @allure.title("Register user and change fields")
+    @allure.description("This test register user then auth by them and change name/email (success)")
     def test_edit_user_auth_user(self):
         # Register
         register_date = self.prepare_registration_data()
@@ -47,6 +51,8 @@ class TestUserEdit(BaseCase):
 
         Assertions.assert_code_status(response4, 400)
 
+    @allure.title("Change name not authorize user")
+    @allure.description("In this test user not authorize and trying change the name (not success)")
     def test_edit_user_not_auth(self):
         name = 'Harry'
         response = requests.put('https://playground.learnqa.ru/api/user/25', data={'firstName': name})
@@ -54,6 +60,8 @@ class TestUserEdit(BaseCase):
         Assertions.assert_code_status(response, 400)
         assert response.content.decode("utf-8") == 'Auth token not supplied', f'wrong error message {response.content}'
 
+    @allure.title("Editing another user")
+    @allure.description("In this test user authorize and change another user (not success)")
     def test_edit_another_user_auth(self):
         data = {
             'email': 'vinkotov@example.com',
